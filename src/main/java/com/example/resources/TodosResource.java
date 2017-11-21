@@ -31,6 +31,18 @@ public class TodosResource {
 	}
 
 	/**
+	 * @apiDefine CreateTodoError
+	 *
+	 * @apiError (Error 400) TitleRequired タイトルが設定されていない.
+	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.
+	 *
+	 * @apiErrorExample  Response (example):
+	 *     HTTP/1.1 400 Bad Request
+	 *     {
+	 *       "error": "TitleRequired"
+	 *     }
+	 */
+	/**
 	 * @api {post} /todos/ Create
 	 * @apiName CreateTodo
 	 * @apiGroup Todo
@@ -41,26 +53,49 @@ public class TodosResource {
 	 * @apiParamExample {json} Request-Example: 
 	 * { "title": "example todo",
 	 *                  "contents": "This is an example content" }
+	 *                  
+	 * @apiUse CreateTodoError
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createTodo(String message) {
 		System.out.println("message: " + message);
+		JSONObject json = null;
 		try {
-			JSONObject json = new JSONObject(message);
-			String title = json.getString("title");
-			String contents = json.getString("contents");
-			Todo todo = new Todo();
-			todo.setTitle(title);
-			todo.setContents(contents);
-			Todos.getInstance().addTodo(todo);
+			json = new JSONObject(message);
 		} catch (JSONException e) {
-			String m = "something wrong with JSON body: " + e.getMessage();
+			String m = "error: InvalidJsonSyntax";
 			return Response.status(Status.BAD_REQUEST).entity(m).build();
 		}
+		Todo todo = new Todo();
+		try {
+			String title = json.getString("title");
+			todo.setTitle(title);
+		} catch (JSONException e) {
+			String m = "error: TitleRequired";
+			return Response.status(Status.BAD_REQUEST).entity(m).build();
+		}
+		try {
+			String contents = json.getString("contents");
+			todo.setContents(contents);
+		} catch (JSONException e) {
+			// 内容はオプションなのでここは無視する
+		}
+		Todos.getInstance().addTodo(todo);
 		return Response.status(Status.CREATED).build();
 	}
 
+	/**
+	 * @apiDefine SearchTodoError
+	 *
+	 * @apiError (Error 400) QueryRequired クエリが設定されていない.
+	 *
+	 * @apiErrorExample  Response (example):
+	 *     HTTP/1.1 400 Bad Request
+	 *     {
+	 *       "error": "QueryRequired"
+	 *     }
+	 */
 	/**
 	 * @api {get} /todos/search Search
 	 * @apiName SearchTodo
@@ -77,6 +112,8 @@ public class TodosResource {
 	 * 	["id": "0", "title": "todo", "contents": "todoの内容"],
 	 *  ["id": "1", "title": "more todo", "contents": "todoの内容"]
 	 * }
+	 * 
+	 * @apiUse SearchTodoError
 	 */
 	@Path("search")
 	@GET
@@ -85,7 +122,7 @@ public class TodosResource {
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		List<String> queryList = queryParams.get("q");
 		if (queryList == null || queryList.isEmpty()) {
-			String m = "error: query parameter 'q' not found";
+			String m = "error: QueryRequired";
 			return Response.status(Status.BAD_REQUEST).entity(m).build();
 		}
 		JSONArray jsonArray = new JSONArray();

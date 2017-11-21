@@ -47,9 +47,6 @@ public class TodosResourceTest {
 		server.shutdownNow();
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
 	@Test
 	public void testCreateTodo() {
 		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
@@ -63,9 +60,14 @@ public class TodosResourceTest {
 		assertEquals("テストコンテンツ", todo.getContents());
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
+	@Test
+	public void testCreateTodo_400() {
+		String entity = "{\"contents\":\"テストコンテンツ\"}";
+		Response response = target.path("todos").request()
+				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+		assertEquals(400, response.getStatus());
+	}
+
 	@Test
 	public void testSearchTodo() {
 		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
@@ -91,5 +93,21 @@ public class TodosResourceTest {
 		assertEquals("0", todo.getId());
 		assertEquals("テストタイトル", todo.getTitle());
 		assertEquals("テストコンテンツ", todo.getContents());
+	}
+
+	@Test
+	public void testSearchTodo_400() {
+		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
+		Response response = target.path("todos").request()
+				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+		assertEquals(201, response.getStatus());
+
+		String responseMsg = target.path("todos").request("application/json")
+				.get(String.class);
+		System.out.println("responseMsg: " + responseMsg);
+
+		response = target.path("todos/search").request("application/json")
+				.get(Response.class);
+		assertEquals(400, response.getStatus());
 	}
 }

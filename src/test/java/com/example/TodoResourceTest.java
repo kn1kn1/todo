@@ -47,19 +47,31 @@ public class TodoResourceTest {
 		server.shutdownNow();
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
 	@Test
-	public void testTodo() {
+	public void testGetTodo() {
+		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
+		Response response = target.path("todos").request()
+				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+		assertEquals(201, response.getStatus());
+
+		response = target.path("todos/0").request()
+				.get(Response.class);
+		assertEquals(200, response.getStatus());
+
+		Todo todo = response.readEntity(Todo.class);
+		assertEquals("0", todo.getId());
+		assertEquals("テストタイトル", todo.getTitle());
+		assertEquals("テストコンテンツ", todo.getContents());
+	
+	}
+	
+	@Test
+	public void testGetTodo_404() {
 		Response response = target.path("todos/0").request()
 				.get(Response.class);
 		assertEquals(404, response.getStatus());
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
 	@Test
 	public void testDeleteTodo() {
 		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
@@ -75,18 +87,12 @@ public class TodoResourceTest {
 		assertEquals(200, response.getStatus());
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
 	@Test
 	public void testDeleteTodo_404() {
 		Response response = target.path("todos/0").request().delete();
 		assertEquals(404, response.getStatus());
 	}
 
-	/**
-	 * Test to see that the message "Got it!" is sent in the response.
-	 */
 	@Test
 	public void testUpdateTodo() {
 		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
