@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.example.Main;
 import com.example.models.Todo;
 import com.example.models.Todos;
 
@@ -41,6 +42,12 @@ public class TodosResource {
 	 * @apiParamExample {json} Request-Example: 
 	 * { "title": "example todo",
 	 *                  "contents": "This is an example content" }
+	 * 
+	 * @apiSuccessExample {json} Success-Response: 
+	 * HTTP/1.1 201 Created 
+	 * {
+	 *	"id": "0", "title": "todo", "contents": "todoの内容"
+	 * }
 	 *                  
 	 * @apiError (Error 400) TitleRequired タイトルが設定されていない.
 	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.
@@ -53,7 +60,8 @@ public class TodosResource {
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response createTodo(String message) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createTodo(String message) throws JSONException {
 		System.out.println("message: " + message);
 		JSONObject json = null;
 		try {
@@ -77,7 +85,9 @@ public class TodosResource {
 			// 内容はオプションなのでここは無視する
 		}
 		Todos.getInstance().addTodo(todo);
-		return Response.status(Status.CREATED).build();
+		String entity = TodoResource.toJSON(todo).toString();
+		String location = Main.BASE_URI + "todos/" + todo.getId();
+		return Response.status(Status.CREATED).header("Location", location).entity(entity).build();
 	}
 
 	/**

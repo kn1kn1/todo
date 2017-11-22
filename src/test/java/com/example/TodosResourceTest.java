@@ -53,8 +53,16 @@ public class TodosResourceTest {
 		Response response = target.path("todos").request()
 				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
 		assertEquals(201, response.getStatus());
+		
+		assertEquals("http://localhost:3000/todos/0", response.getHeaders().get("Location").get(0));
+//		assertEquals(Main.BASE_URI + "todos/" + "0", response.getHeaders().get("Location").get(0));
+		
+		Todo todo = response.readEntity(Todo.class);
+		assertEquals("0", todo.getId());
+		assertEquals("テストタイトル", todo.getTitle());
+		assertEquals("テストコンテンツ", todo.getContents());
 
-		Todo todo = target.path("todos/0").request().get(Todo.class);
+		todo = target.path("todos/0").request().get(Todo.class);
 		assertEquals("0", todo.getId());
 		assertEquals("テストタイトル", todo.getTitle());
 		assertEquals("テストコンテンツ", todo.getContents());
