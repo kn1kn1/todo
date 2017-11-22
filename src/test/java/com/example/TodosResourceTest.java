@@ -61,11 +61,12 @@ public class TodosResourceTest {
 	}
 
 	@Test
-	public void testCreateTodo_400() {
+	public void testCreateTodo_400TitleRequired() {
 		String entity = "{\"contents\":\"テストコンテンツ\"}";
 		Response response = target.path("todos").request()
 				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
 		assertEquals(400, response.getStatus());
+		assertEquals("error: TitleRequired", response.readEntity(String.class));
 	}
 
 	@Test
@@ -96,7 +97,7 @@ public class TodosResourceTest {
 	}
 
 	@Test
-	public void testSearchTodo_400() {
+	public void testSearchTodo_400QueryRequired() {
 		String entity = "{\"title\":\"テストタイトル\",\"contents\":\"テストコンテンツ\"}";
 		Response response = target.path("todos").request()
 				.post(Entity.entity(entity, MediaType.APPLICATION_JSON));
@@ -109,5 +110,6 @@ public class TodosResourceTest {
 		response = target.path("todos/search").request("application/json")
 				.get(Response.class);
 		assertEquals(400, response.getStatus());
+		assertEquals("error: QueryRequired", response.readEntity(String.class));
 	}
 }

@@ -31,18 +31,6 @@ public class TodosResource {
 	}
 
 	/**
-	 * @apiDefine CreateTodoError
-	 *
-	 * @apiError (Error 400) TitleRequired タイトルが設定されていない.
-	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.
-	 *
-	 * @apiErrorExample  Response (example):
-	 *     HTTP/1.1 400 Bad Request
-	 *     {
-	 *       "error": "TitleRequired"
-	 *     }
-	 */
-	/**
 	 * @api {post} /todos/ Create
 	 * @apiName CreateTodo
 	 * @apiGroup Todo
@@ -54,7 +42,14 @@ public class TodosResource {
 	 * { "title": "example todo",
 	 *                  "contents": "This is an example content" }
 	 *                  
-	 * @apiUse CreateTodoError
+	 * @apiError (Error 400) TitleRequired タイトルが設定されていない.
+	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.
+	 *
+	 * @apiErrorExample  Response (example):
+	 *     HTTP/1.1 400 Bad Request
+	 *     {
+	 *       "error": "TitleRequired"
+	 *     }
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -86,17 +81,6 @@ public class TodosResource {
 	}
 
 	/**
-	 * @apiDefine SearchTodoError
-	 *
-	 * @apiError (Error 400) QueryRequired クエリが設定されていない.
-	 *
-	 * @apiErrorExample  Response (example):
-	 *     HTTP/1.1 400 Bad Request
-	 *     {
-	 *       "error": "QueryRequired"
-	 *     }
-	 */
-	/**
 	 * @api {get} /todos/search Search
 	 * @apiName SearchTodo
 	 * @apiGroup Todo
@@ -113,7 +97,13 @@ public class TodosResource {
 	 *  ["id": "1", "title": "more todo", "contents": "todoの内容"]
 	 * }
 	 * 
-	 * @apiUse SearchTodoError
+	 * @apiError (Error 400) QueryRequired クエリが設定されていない.
+	 *
+	 * @apiErrorExample  Response (example):
+	 *     HTTP/1.1 400 Bad Request
+	 *     {
+	 *       "error": "QueryRequired"
+	 *     }
 	 */
 	@Path("search")
 	@GET

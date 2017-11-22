@@ -23,6 +23,17 @@ public class TodoResource {
 	}
 
 	/**
+	 * @apiDefine TodoNotFoundError
+	 *
+	 * @apiError (Error 404) TodoNotFound Todoが存在しない.
+	 *
+	 * @apiErrorExample  Response (example):
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "TodoNotFound"
+	 *     }
+	 */
+	/**
 	 * @api {get} /todos/{todoid} Get
 	 * @apiName GetTodo
 	 * @apiGroup Todo
@@ -36,6 +47,8 @@ public class TodoResource {
 	 * {
 	 *	"id": "0", "title": "todo", "contents": "todoの内容"
 	 * }
+	 * 
+	 * @apiUse TodoNotFoundError
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -43,7 +56,8 @@ public class TodoResource {
 		Todos todos = Todos.getInstance();
 		Todo todo = todos.getTodo(id);
 		if (todo == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			String m = "error: TodoNotFound";
+			return Response.status(Status.NOT_FOUND).entity(m).build();
 		}
 
 		String message = toJSON(todo).toString();
@@ -54,13 +68,16 @@ public class TodoResource {
 	 * @api {delete} /todos/{todoid} Delete
 	 * @apiName DeleteTodo
 	 * @apiGroup Todo
+	 * 
+	 * @apiUse TodoNotFoundError
 	 */
 	@DELETE
 	public Response deleteTodo() throws JSONException {
 		Todos todos = Todos.getInstance();
 		Todo todo = todos.delteTodo(id);
 		if (todo == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			String m = "error: TodoNotFound";
+			return Response.status(Status.NOT_FOUND).entity(m).build();
 		}
 		return Response.ok().build();
 	}
@@ -69,10 +86,16 @@ public class TodoResource {
 	 * @api {put} /todos/{todoid} Update
 	 * @apiName UpdateTodo
 	 * @apiGroup Todo
+	 * 
+	 * @apiParam {String} [title] todoのタイトル.
+	 * @apiParam {String} [contents] todoの内容.
 	 *
 	 * @apiParamExample {json} Request-Example: 
 	 * 					{ "title": "example todo",
 	 *                  "contents": "This is an example content" }
+	 * 
+	 * @apiUse TodoNotFoundError
+	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.
 	 */
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -80,18 +103,28 @@ public class TodoResource {
 		Todos todos = Todos.getInstance();
 		Todo todo = todos.getTodo(id);
 		if (todo == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			String m = "error: TodoNotFound";
+			return Response.status(Status.NOT_FOUND).entity(m).build();
 		}
 		System.out.println("message: " + message);
+		JSONObject json = null;
 		try {
-			JSONObject json = new JSONObject(message);
+			json = new JSONObject(message);
+		} catch (JSONException e) {
+			String m = "error: InvalidJsonSyntax";
+			return Response.status(Status.BAD_REQUEST).entity(m).build();
+		}
+		try {
 			String title = json.getString("title");
-			String contents = json.getString("contents");
 			todo.setTitle(title);
+		} catch (JSONException e) {
+			// タイトルが設定されていない場合も許容するので無視する
+		}
+		try {
+			String contents = json.getString("contents");
 			todo.setContents(contents);
 		} catch (JSONException e) {
-			String m = "something wrong with JSON body: " + e.getMessage();
-			return Response.status(Status.BAD_REQUEST).entity(m).build();
+			// 内容が設定されていない場合も許容するので無視する
 		}
 		return Response.ok().build();
 	}

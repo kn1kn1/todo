@@ -66,10 +66,11 @@ public class TodoResourceTest {
 	}
 	
 	@Test
-	public void testGetTodo_404() {
+	public void testGetTodo_404TodoNotFound() {
 		Response response = target.path("todos/0").request()
 				.get(Response.class);
 		assertEquals(404, response.getStatus());
+		assertEquals("error: TodoNotFound", response.readEntity(String.class));
 	}
 
 	@Test
@@ -88,9 +89,10 @@ public class TodoResourceTest {
 	}
 
 	@Test
-	public void testDeleteTodo_404() {
+	public void testDeleteTodo_404TodoNotFound() {
 		Response response = target.path("todos/0").request().delete();
 		assertEquals(404, response.getStatus());
+		assertEquals("error: TodoNotFound", response.readEntity(String.class));
 	}
 
 	@Test
@@ -132,5 +134,14 @@ public class TodoResourceTest {
 		assertEquals("0", todo.getId());
 		assertEquals("テストタイトル2", todo.getTitle());
 		assertEquals("テストコンテンツ2", todo.getContents());
+	}
+	
+	@Test
+	public void testUpdateTodo_404TodoNotFound() {
+		String entity = "{\"title\":\"テストタイトル2\",\"contents\":\"テストコンテンツ2\"}";
+		Response response = target.path("todos/0").request()
+				.put(Entity.entity(entity, MediaType.APPLICATION_JSON));
+		assertEquals(404, response.getStatus());
+		assertEquals("error: TodoNotFound", response.readEntity(String.class));
 	}
 }
