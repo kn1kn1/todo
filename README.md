@@ -28,18 +28,18 @@ $ mvn exec:java
 [INFO] Scanning for projects...
 [INFO]
 [INFO] ------------------------------------------------------------------------
-[INFO] Building simple-service 1.0-SNAPSHOT
+[INFO] Building todo 1.0-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
 [INFO]
-[INFO] >>> exec-maven-plugin:1.2.1:java (default-cli) > validate @ simple-service >>>
+[INFO] >>> exec-maven-plugin:1.2.1:java (default-cli) > validate @ todo >>>
 [INFO]
-[INFO] <<< exec-maven-plugin:1.2.1:java (default-cli) < validate @ simple-service <<<
+[INFO] <<< exec-maven-plugin:1.2.1:java (default-cli) < validate @ todo <<<
 [INFO]
 [INFO]
-[INFO] --- exec-maven-plugin:1.2.1:java (default-cli) @ simple-service ---
-Nov 21, 2017 6:19:44 AM org.glassfish.grizzly.http.server.NetworkListener start
+[INFO] --- exec-maven-plugin:1.2.1:java (default-cli) @ todo ---
+Nov 23, 2017 7:03:42 AM org.glassfish.grizzly.http.server.NetworkListener start
 情報: Started listener bound to [localhost:3000]
-Nov 21, 2017 6:19:44 AM org.glassfish.grizzly.http.server.HttpServer start
+Nov 23, 2017 7:03:42 AM org.glassfish.grizzly.http.server.HttpServer start
 情報: [HttpServer] Started.
 Jersey app started with WADL available at http://localhost:3000/application.wadl
 Hit enter to stop it...
