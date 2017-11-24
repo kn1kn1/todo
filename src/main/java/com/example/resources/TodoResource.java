@@ -27,26 +27,26 @@ public class TodoResource {
 	 *
 	 * @apiError (Error 404) TodoNotFound Todoが存在しない.
 	 *
-	 * @apiErrorExample  Response (example):
-	 *     HTTP/1.1 404 Not Found
-	 *     {
-	 *       "error": "TodoNotFound"
-	 *     }
+	 * @apiErrorExample Response (example): 
+	 * HTTP/1.1 404 Not Found 
+	 * { "error": "TodoNotFound" }
 	 */
 	/**
 	 * @api {get} /todos/{todoid} Get
 	 * @apiName GetTodo
 	 * @apiGroup Todo
 	 *
+	 * @apiExample {curl} Example usage: 
+	 * curl -i http://localhost:3000/todos/0
+	 * 
 	 * @apiSuccess {String} id Todoのid.
 	 * @apiSuccess {String} title Todoのタイトル.
 	 * @apiSuccess {String} contents Todoの内容.
 	 * 
 	 * @apiSuccessExample {json} Success-Response: 
 	 * HTTP/1.1 200 OK 
-	 * {
-	 *	"id": "0", "title": "todo", "contents": "todoの内容"
-	 * }
+	 * Content-Type: application/json 
+	 * { "id": "0", "title": "todo", "contents": "todoの内容" }
 	 * 
 	 * @apiUse TodoNotFoundError
 	 */
@@ -69,6 +69,9 @@ public class TodoResource {
 	 * @apiName DeleteTodo
 	 * @apiGroup Todo
 	 * 
+	 * @apiExample {curl} Example usage: 
+	 * curl -i -X DELETE http://localhost:3000/todos/0
+	 * 
 	 * @apiUse TodoNotFoundError
 	 */
 	@DELETE
@@ -87,12 +90,17 @@ public class TodoResource {
 	 * @apiName UpdateTodo
 	 * @apiGroup Todo
 	 * 
+	 * @apiExample {curl} Example usage: 
+	 * curl -i -X PUT -H "Content-Type: application/json" -d '{"title":"todoタイトル2","contents":"todoの内容2"}' http://localhost:3000/todos/0
+	 * 
 	 * @apiParam {String} [title] todoのタイトル.
 	 * @apiParam {String} [contents] todoの内容.
 	 *
 	 * @apiParamExample {json} Request-Example: 
-	 * 					{ "title": "example todo",
-	 *                  "contents": "This is an example content" }
+	 * PUT /todos/0 HTTP/1.1 
+	 * Host: localhost:3000
+	 * Content-Type: application/json 
+	 * { "title": "todoタイトル2", "contents": "todoの内容2" }
 	 * 
 	 * @apiUse TodoNotFoundError
 	 * @apiError (Error 400) InvalidJsonSyntax JSONの文法が不正.

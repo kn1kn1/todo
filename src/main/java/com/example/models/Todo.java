@@ -46,7 +46,7 @@ public class Todo {
 		Todo other = (Todo) obj;
 		return id == null ? other.getId() == null : id.equals(other.getId());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return id == null ? Integer.MIN_VALUE : Integer.parseInt(id);
